@@ -1,0 +1,22 @@
+#countdownText {
+     margin-top: 200px;
+     font-size: 500%;
+}
+
+#stage, #score {
+     justify-content: center;
+     align-items: center;
+}
+
+.btn-primary {
+     margin: 10px;
+}
+
+.hide {
+     display: none;
+}
+
+.show {
+     display: flex;
+}
+
