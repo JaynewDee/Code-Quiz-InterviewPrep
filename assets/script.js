@@ -11,19 +11,10 @@ var formButt = document.querySelector('#formButt');
 var inits = document.querySelector('#initInput')
 let countdownTimer = 3;
 let scoreTimer = 60;
-const scoreBoard = JSON.parse(localStorage.quizScores);
-
-console.log(localStorage.quizScores.length)
-console.log(JSON.parse(localStorage.quizScores))
+const scoreBoard = [];
 storageInit();
+console.log(scoreBoard);
 
-function storageInit() {
-     while (i < localStorage.quizScores.length) {
-     let item = localStorage.getItem(JSON.parse(quizScores[i]))
-     scoreBoard.push(item);
-     i++;
-     }
-}
 
 // Array of questions as objects
 const questionsArr = [
@@ -63,7 +54,7 @@ const questionsArr = [
 var i = 0;
 
 function renderQuestion() {
-     
+
      var questionStage = document.createElement('h2');
      var answersStage = document.createElement('ul');
      quizStage.appendChild(questionStage);
@@ -83,23 +74,23 @@ function renderQuestion() {
                if (userChoice === questionsArr[i].correctAnswer) {
                     quizStage.removeChild(quizStage.firstChild);
                     i++;
-                    if ( i === questionsArr.length) {
+                    if (i === questionsArr.length) {
                          endQuiz();
                          return;
                     }
                     renderQuestion();
                } else if (userChoice !== questionsArr[i].correctAnswer) {
-                         $(this).addClass('btn-danger')
-                         let hitpoints = document.createElement('h3');
-                         hitpoints.textContent = "-5";
-                         $('#score').append(hitpoints);
-                         
+                    $(this).addClass('btn-danger')
+                    let hitpoints = document.createElement('h3');
+                    hitpoints.textContent = "-5";
+                    $('#score').append(hitpoints);
+
                     setTimeout(() => {
                          $(this).removeClass('btn-danger')
                          $(scoreTimer).remove();
                     }, 2200);
                     scoreTimer -= 5;
-               } 
+               }
           })
      }
 }
@@ -114,7 +105,7 @@ function scoreCount() {
                clearInterval(count);
                score.textContent = "";
                gameOver();
-          } else if ( i === questionsArr.length) {
+          } else if (i === questionsArr.length) {
                clearInterval(count);
           }
      }, 1000)
@@ -131,11 +122,11 @@ function gameOver() {
      gameOverButt.textContent = "Click to try again";
      quizStage.appendChild(gameOverText);
      gameOverText.appendChild(gameOverButt);
-     gameOverText.addEventListener('click', function() {
+     gameOverText.addEventListener('click', function () {
           location.reload();
      })
 
-     
+
 }
 
 // Countdown timer function
@@ -167,8 +158,8 @@ function startQuiz(event) {
 function endQuiz() {
      quizStage.textContent = 'Final Score:';
      $('#formArea').attr('style', "display: flex");
-     
-     $('#formButt').click(function(event) {
+
+     $('#formButt').click(function (event) {
           event.preventDefault();
           let newUser = {
                initials: inits.value,
@@ -181,26 +172,81 @@ function endQuiz() {
           $('#formArea').attr('style', "display: none");
           score.textContent = "";
           let boardStage = document.createElement('div')
-          $(boardStage).attr('class', 'container-md d-flex mx-auto').css({"background-color":"black"});
-          $('#countdownText').append(boardStage);
+          $(boardStage).attr('class', 'container-sm d-flex mx-auto bg-secondary').css({
+               "height": "500px",
+               "border-radius": "20px"
+          });
+          $('body').append(boardStage);
+          $('#formStage').text("Score Board").css({'font-size':'250%', 'top': "-200px"}).addClass("text-primary");
           
-
-
-     })
-
-     
+          scoreBoard.sort((a, b) => (a.score < b.score) ? 1 : -1);
+          scoreBoard.forEach((item) => console.log(item));
+          const tableTemplate = `
+          <table class="table">
+               <thead>
+                    <tr>
+                         <th scope="col">#</th>
+                         <th scope="col">Name/Initials</th>
+                         <th scope="col">Score</th>
+                    </tr>
+               </thead>
+               <tbody>
+                    <tr>
+                         <th scope="row">1</th>
+                         <td>${scoreBoard[0].initials}</td>
+                         <td>${scoreBoard[0].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">2</th>
+                         <td>${scoreBoard[1].initials}</td>
+                         <td>${scoreBoard[1].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">3</th>
+                         <td>${scoreBoard[2].initials}</td>
+                         <td>${scoreBoard[2].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">4</th>
+                         <td>${scoreBoard[3].initials}</td>
+                         <td>${scoreBoard[3].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">5</th>
+                         <td>${scoreBoard[4].initials}</td>
+                         <td>${scoreBoard[4].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">6</th>
+                         <td>${scoreBoard[5].initials}</td>
+                         <td>${scoreBoard[5].score}</td>
+                    </tr>
+                    <tr>
+                         <th scope="row">7</th>
+                         <td>${scoreBoard[6].initials}</td>
+                         <td>${scoreBoard[6].score}</td>
+                    </tr>
+               </tbody>
+          </table>`;
+          boardStage.innerHTML = tableTemplate;
+          })
 }
 
+function storageInit() {
+     let i = 0;
+     if (localStorage.quizScores) {
+          let storageObj = JSON.parse(localStorage.quizScores)
+          while (i < storageObj.length) {
+               let item = storageObj[i];
+               scoreBoard.push(item);
+               i++;
+          }
+     } else {
+          return;
+     }
+}
 // Stores player's score locally
-
-
 // Refreshes page display and reveals scoreboard
-// function scoreBoard(event) {
-
-//      quizStage.textContent = "High Scores:"
-//      let scoreList = document.createElement('ol');
-//      quizStage.appendChild(scoreList);
-// }
 
 
 
@@ -209,5 +255,3 @@ function endQuiz() {
 startButton.addEventListener("click", startQuiz);
 // Score Submit Button Listener
 ;
-
-
