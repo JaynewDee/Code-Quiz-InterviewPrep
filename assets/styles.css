@@ -14,9 +14,22 @@
 
 .hide {
      display: none;
+     visibility: hidden;
 }
 
 .show {
      display: flex;
 }
+
+#formStage {
+     justify-content: center;
+     align-items: center;
+     display: none;
+     visibility: hidden;
+}
+
+#formArea {
+     margin-top: 20px;
+}
+
 
