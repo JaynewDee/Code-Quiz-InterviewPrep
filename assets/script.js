@@ -8,8 +8,22 @@ var formStage = document.querySelector('#formStage');
 var formText = document.querySelector('#formText');
 var formArea = document.querySelector('#formArea');
 var formButt = document.querySelector('#formButt');
+var inits = document.querySelector('#initInput')
 let countdownTimer = 3;
 let scoreTimer = 60;
+const scoreBoard = JSON.parse(localStorage.quizScores);
+
+console.log(localStorage.quizScores.length)
+console.log(JSON.parse(localStorage.quizScores))
+storageInit();
+
+function storageInit() {
+     while (i < localStorage.quizScores.length) {
+     let item = localStorage.getItem(JSON.parse(quizScores[i]))
+     scoreBoard.push(item);
+     i++;
+     }
+}
 
 // Array of questions as objects
 const questionsArr = [
@@ -49,8 +63,6 @@ const questionsArr = [
 var i = 0;
 
 function renderQuestion() {
-     scoreTimer.disabled = false;
-     quizStage.disabled = false;
      
      var questionStage = document.createElement('h2');
      var answersStage = document.createElement('ul');
@@ -77,6 +89,15 @@ function renderQuestion() {
                     }
                     renderQuestion();
                } else if (userChoice !== questionsArr[i].correctAnswer) {
+                         $(this).addClass('btn-danger')
+                         let hitpoints = document.createElement('h3');
+                         hitpoints.textContent = "-5";
+                         $('#score').append(hitpoints);
+                         
+                    setTimeout(() => {
+                         $(this).removeClass('btn-danger')
+                         $(scoreTimer).remove();
+                    }, 2200);
                     scoreTimer -= 5;
                } 
           })
@@ -101,11 +122,20 @@ function scoreCount() {
 
 function gameOver() {
      quizStage.removeChild(quizStage.firstChild);
-     const gameOverText = document.createElement("h1");
+     const gameOverText = document.createElement("button");
+     gameOverText.setAttribute('style', 'display: flex')
+     gameOverText.setAttribute('style', 'padding: 10px')
+     gameOverText.setAttribute('class', 'btn-warning btn')
      gameOverText.textContent = "Time's up!";
-     const gameOverButt = document.createElement('button');
-
+     const gameOverButt = document.createElement('h6');
+     gameOverButt.textContent = "Click to try again";
      quizStage.appendChild(gameOverText);
+     gameOverText.appendChild(gameOverButt);
+     gameOverText.addEventListener('click', function() {
+          location.reload();
+     })
+
+     
 }
 
 // Countdown timer function
@@ -135,20 +165,34 @@ function startQuiz(event) {
 }
 
 function endQuiz() {
-     formStage.setAttribute('style', 'visibility: visible');
-     formArea.setAttribute('style', 'visibility: visible')
      quizStage.textContent = 'Final Score:';
-     formStage.textContent = "Enter your initials to save your score:";
-     // formStage.setAttribute("style", "visibility: visible");
-
+     $('#formArea').attr('style', "display: flex");
      
+     $('#formButt').click(function(event) {
+          event.preventDefault();
+          let newUser = {
+               initials: inits.value,
+               score: scoreTimer,
+          }
+          scoreBoard.push(newUser);
+          console.log(scoreBoard);
+          localStorage.setItem("quizScores", JSON.stringify(scoreBoard));
+          $('#stage').attr('style', "visibility: hidden");
+          $('#formArea').attr('style', "display: none");
+          score.textContent = "";
+          let boardStage = document.createElement('div')
+          $(boardStage).attr('class', 'container-md d-flex mx-auto').css({"background-color":"black"});
+          $('#countdownText').append(boardStage);
+          
+
+
+     })
+
      
 }
 
 // Stores player's score locally
-function storeScore(initials) {
-     localStorage.setItem(initials, scoreTimer);
-}
+
 
 // Refreshes page display and reveals scoreboard
 // function scoreBoard(event) {
@@ -164,6 +208,6 @@ function storeScore(initials) {
 // Start Button Listener
 startButton.addEventListener("click", startQuiz);
 // Score Submit Button Listener
-formButt.addEventListener("click", storeScore)
+;
 
 

@@ -24,12 +24,17 @@
 #formStage {
      justify-content: center;
      align-items: center;
-     display: none;
-     visibility: hidden;
 }
 
 #formArea {
+     justify-content: center;
+     align-items: center;
      margin-top: 20px;
+     display: none;
+}
+
+#formButt {
+     margin-left: 5px;
 }
 
 
