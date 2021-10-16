@@ -13,8 +13,6 @@ let countdownTimer = 3;
 let scoreTimer = 60;
 const scoreBoard = [];
 storageInit();
-console.log(scoreBoard);
-
 
 // Array of questions as objects
 const questionsArr = [
@@ -111,6 +109,7 @@ function scoreCount() {
      }, 1000)
 }
 
+// Function here determines the ending for the user should they run out of time/score
 function gameOver() {
      quizStage.removeChild(quizStage.firstChild);
      const gameOverText = document.createElement("button");
@@ -155,6 +154,7 @@ function startQuiz(event) {
      countDown();
 }
 
+// Function here triggers when no questions remain
 function endQuiz() {
      quizStage.textContent = 'Final Score:';
      $('#formArea').attr('style', "display: flex");
@@ -166,7 +166,6 @@ function endQuiz() {
                score: scoreTimer,
           }
           scoreBoard.push(newUser);
-          console.log(scoreBoard);
           localStorage.setItem("quizScores", JSON.stringify(scoreBoard));
           $('#stage').attr('style', "visibility: hidden");
           $('#formArea').attr('style', "display: none");
@@ -174,62 +173,16 @@ function endQuiz() {
           let boardStage = document.createElement('div')
           $(boardStage).attr('class', 'container-sm d-flex mx-auto bg-secondary').css({
                "height": "500px",
-               "border-radius": "20px"
+               "border-radius": "9px"
           });
           $('body').append(boardStage);
-          $('#formStage').text("Score Board").css({'font-size':'250%', 'top': "-200px"}).addClass("text-primary");
-          
-          scoreBoard.sort((a, b) => (a.score < b.score) ? 1 : -1);
-          scoreBoard.forEach((item) => console.log(item));
-          const tableTemplate = `
-          <table class="table">
-               <thead>
-                    <tr>
-                         <th scope="col">#</th>
-                         <th scope="col">Name/Initials</th>
-                         <th scope="col">Score</th>
-                    </tr>
-               </thead>
-               <tbody>
-                    <tr>
-                         <th scope="row">1</th>
-                         <td>${scoreBoard[0].initials}</td>
-                         <td>${scoreBoard[0].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">2</th>
-                         <td>${scoreBoard[1].initials}</td>
-                         <td>${scoreBoard[1].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">3</th>
-                         <td>${scoreBoard[2].initials}</td>
-                         <td>${scoreBoard[2].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">4</th>
-                         <td>${scoreBoard[3].initials}</td>
-                         <td>${scoreBoard[3].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">5</th>
-                         <td>${scoreBoard[4].initials}</td>
-                         <td>${scoreBoard[4].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">6</th>
-                         <td>${scoreBoard[5].initials}</td>
-                         <td>${scoreBoard[5].score}</td>
-                    </tr>
-                    <tr>
-                         <th scope="row">7</th>
-                         <td>${scoreBoard[6].initials}</td>
-                         <td>${scoreBoard[6].score}</td>
-                    </tr>
-               </tbody>
-          </table>`;
-          boardStage.innerHTML = tableTemplate;
-          })
+          $('#formStage').text("Score Board").css({
+               'font-size': '250%',
+               'top': "-200px"
+          }).addClass("text-primary");
+
+          renderScores(boardStage);
+     })
 }
 
 function storageInit() {
@@ -245,13 +198,39 @@ function storageInit() {
           return;
      }
 }
-// Stores player's score locally
-// Refreshes page display and reveals scoreboard
+// renderScores();
+// Renders scoreboard by parsing array of objects
+function renderScores(parent) {
+     // Generate essential table structure
+          let frame = $('<table class="table"></table').appendTo(parent);
+          let header = $('<thead></thead').appendTo(frame);
+          let headRow = $('<tr></tr>').appendTo(header);
+          let numCol = $('<th scope="col">#</th>').appendTo(headRow);
+          let nameCol = $('<th scope="col">Name</th>').appendTo(headRow);
+          let scoreCol = $('<th scope="col">Score</th>').appendTo(headRow);
+          let tableBody = $('<tbody></tbody').appendTo(frame)
 
+          // parses objects of scoreBoard array
+     scoreBoard.sort((a, b) => (a.score < b.score) ? 1 : -1);
+     let initsArr = scoreBoard.map(user => user.initials);
+     let scoresArr = scoreBoard.map(user => user.score);
+     console.log(scoreBoard)
+     scoreBoard.forEach((player) => {
+          const placeRow = $('<tr></tr>').appendTo(tableBody)
+          let placeRank = $('<th scope="row"></th>').text(initsArr.indexOf(player.initials) + 1);
+          let placeInit = $('<td></td>').text(player.initials);
+          let placeScore = $('<td></td>').text(player.score);
+          placeRank.appendTo(placeRow);
+          placeInit.appendTo(placeRow);
+          placeScore.appendTo(placeRow);
+          ;
+     })
+     
+     const highScores = scoreBoard.filter(user => user.score >= 50);
+}
 
 
 
 // Start Button Listener
 startButton.addEventListener("click", startQuiz);
 // Score Submit Button Listener
-;
