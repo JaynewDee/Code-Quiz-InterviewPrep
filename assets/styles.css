@@ -12,6 +12,10 @@
      margin: 10px;
 }
 
+.center {
+     justify-content: space-around;
+     align-content: center;
+}
 .hide {
      display: none;
      visibility: hidden;
@@ -37,4 +41,15 @@
      margin-left: 5px;
 }
 
+#openBook {
+     height: 70px;
+     width: 70px;
+}
+#title {
+     display: flex;
+     justify-content: space-around;
+     align-content: center;
+     align-items: center;
+     margin: auto;
+}
 
